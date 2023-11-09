@@ -12,6 +12,24 @@ class JugadorModel extends Model{
         return $jugadores;
     }
 
+    function getJugadoresOrdenados($columna, $orden){
+        //                                                                                                                                                     y si quiere por clubes.nombre que hago???
+        $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club ORDER BY jugadores.' .$columna .$orden);
+        $query->execute();
+
+        $jugadores = $query->fetchAll(PDO::FETCH_OBJ);
+        return $jugadores;
+    }
+
+    function getJugadoresByNacionalidad($nacionalidad){
+        $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club WHERE nacionalidad = ?');
+        $query->execute([$nacionalidad]);
+
+        $jugadores = $query->fetchAll(PDO::FETCH_OBJ);
+        return $jugadores;
+    }
+
+
     function getJugadorById($id){
         $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club WHERE id_jugador = ?');
         $query->execute([$id]);
