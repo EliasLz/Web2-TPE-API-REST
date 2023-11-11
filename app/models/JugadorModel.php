@@ -3,26 +3,33 @@
 require_once './app/models/Model.php';
 
 class JugadorModel extends Model{
-
-    function getJugadoresConNombreDeClub(){
-        $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club');
+    // la solucion sería hacer todo desde pedidos sql solo con con esta funcion
+    function getJugadores($limite=null){
+        if ($limite!=null){ //if ($limite)  if (!empty($limite)) wherever...
+            $query = $this->dataBase->prepare("SELECT * FROM jugadores jugadores LIMIT $limite");
+        } else{
+            $query = $this->dataBase->prepare('SELECT * FROM jugadores jugadores');
+        }
         $query->execute();
 
         $jugadores = $query->fetchAll(PDO::FETCH_OBJ);
         return $jugadores;
     }
 
-    function getJugadoresOrdenados($columna, $orden){
-        //                                                                                                                                                     y si quiere por clubes.nombre que hago???
-        $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club ORDER BY jugadores.' .$columna .$orden);
+    function getJugadoresOrdenados($campo, $orden, $limite=null){
+        if ($limite!=null){
+            $query = $this->dataBase->prepare("SELECT * FROM jugadores ORDER BY $campo $orden LIMIT $limite");
+        } else {
+            $query = $this->dataBase->prepare("SELECT * FROM jugadores ORDER BY $campo $orden");
+        }
         $query->execute();
 
         $jugadores = $query->fetchAll(PDO::FETCH_OBJ);
         return $jugadores;
     }
-
+    //usamos esta funcion en algun momento? la puedo borrar?
     function getJugadoresByNacionalidad($nacionalidad){
-        $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club WHERE nacionalidad = ?');
+        $query = $this->dataBase->prepare('SELECT * FROM jugadores WHERE nacionalidad = ?');
         $query->execute([$nacionalidad]);
 
         $jugadores = $query->fetchAll(PDO::FETCH_OBJ);
