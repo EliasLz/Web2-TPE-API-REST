@@ -37,6 +37,9 @@ class JugadorModel extends Model{
     function modificarJugador($id,$nombre, $edad, $nacionalidad, $posicion, $pie_habil, $club_id){
         $query = $this->dataBase->prepare('UPDATE jugadores SET nombre = ?, edad = ?, nacionalidad = ?, posicion = ?, pie_habil = ?, id_club = ? WHERE id_jugador = ?');
         $query->execute([$nombre, $edad, $nacionalidad, $posicion, $pie_habil, $club_id, $id]);
+
+        $filasAfectadas = $query->rowCount();
+        return $filasAfectadas;
     }
 
     function borrarJugador($id){

@@ -22,7 +22,7 @@ class JugadorApiController extends ApiController{
 
 
 //si escribo mal 'jugadores' en el postman devuelve vacio, no hicimos un msj de error (es necesario controlar eso?)
-    public function getJugadores($params = null){
+    public function getJugadores($params = []){
         if (empty($params)){ 
             // VARIOS ITEMS
             // Defino variables y controlo parametrosGET primero.
@@ -85,7 +85,7 @@ class JugadorApiController extends ApiController{
         }
     }
 
-    function updateJugador($params = null){
+    function updateJugador($params = []){
         $jugador_id = $params[':ID'];
         $jugador = $this->jugadorModel->getJugadorById($jugador_id);
 
@@ -103,8 +103,13 @@ class JugadorApiController extends ApiController{
             } else{          
                 $club = $this->clubModel->getClubById($club_id);
                 if($club){
-                    $this->jugadorModel->modificarJugador($jugador_id, $nombre, $edad, $nacionalidad, $posicion, $pie_habil, $club_id);
-                    $this->view->response('El jugador con el id= '. $jugador_id . ' ha sido modificado', 200);
+                    $filasAfectadas = $this->jugadorModel->modificarJugador($jugador_id, $nombre, $edad, $nacionalidad, $posicion, $pie_habil, $club_id);
+                    if($filasAfectadas>0){
+                        $this->view->response('El jugador con el id= '. $jugador_id . ' ha sido modificado', 200);
+                    }
+                    else{
+                        $this->view->response("El jugador no fue modificado", 400);
+                    }
                 } else{
                     $this->view->response("El club del id $club_id no existe", 404);
                 }
@@ -114,7 +119,7 @@ class JugadorApiController extends ApiController{
         }
     }
 
-    function deleteJugador($params = 0){
+    function deleteJugador($params = []){
         $jugador_id = $params[':ID'];
         $jugador = $this->jugadorModel->getJugadorById($jugador_id);
 
@@ -131,7 +136,7 @@ class JugadorApiController extends ApiController{
         }
     }
 
-    function agregarJugador($params = null){
+    function agregarJugador($params = []){
         $body = $this->getData();
         $nombre = $body->nombre;
         $edad = $body->edad;

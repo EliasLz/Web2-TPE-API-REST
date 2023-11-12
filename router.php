@@ -14,6 +14,8 @@ $router->addRoute('jugadores/:ID','DELETE','JugadorApiController','deleteJugador
 $router->addRoute('jugadores/:ID', 'PUT', 'jugadorApiController', 'updateJugador');
 $router->addRoute('jugadores', 'POST', 'jugadorApiController', 'agregarJugador');
 
+$router->addRoute('user/token', 'GET', 'UserApiController', 'getToken');
+
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
     
  ?>
