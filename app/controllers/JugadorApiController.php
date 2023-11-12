@@ -20,91 +20,61 @@ class JugadorApiController extends ApiController{
 // ademas de restringir ciertas funciones solo a usuarios con token podemos hacer que alguna funcion solo este habilitada
 // para usuarios con token y administradores
 
+
+//si escribo mal 'jugadores' en el postman devuelve vacio, no hicimos un msj de error (es necesario controlar eso?)
     public function getJugadores($params = null){
-        if (empty($params)){
-            $resultado='';
-            $codigo=0;
-            if (!empty($_GET['campo'])){
-                $campo = $_GET['campo'];
-                if ($campo == 'nombre' || $campo == 'edad' || $campo == 'nacionalidad' || $campo == 'posicion' || $campo == 'pie_habil' || $campo == 'id_club'){
-                    if (!empty($_GET['orden'])){
+        if (empty($params)){ 
+            // VARIOS ITEMS
+            // Defino variables y controlo parametrosGET primero.
+            // PAGINAMIENTO:            
+            $inicio = 0;
+            $limite = 50; // Cargamos 3 clubes de 11 jugadores en la db. Con 50 es suficiente.
+            //checkear que el valor de 'pagina' no sea negativo
+            if (!empty($_GET['pagina']) && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= 50){
+                $pagina = intval($_GET['pagina']);
+                $limite = intval($_GET['limite']);
+                if ($pagina>1){
+                    $inicio = ($pagina * $limite) - ($limite);
+                    //controlar bien aca (tengo que saber cuantos items existen en la tabla)
+                    if ($inicio < 0 || $inicio > 50){
+                        return $this->view->response('El valor para el inicio de paginado no es el esperado', 404);
+                    }
+                }
+            } else if (empty($_GET['pagina']) && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= 50){
+                // el ruturn no va abajo?
+                return $this->view->response('El valor de pagina es nulo', 404);
+                //return;
+            } else if (!empty($_GET['limite'])){
+                return $this->view->response('El valor para el limite de paginado no es el esperado', 404);
+            }
+
+            // ORDENAMIENTO: 
+            $campo = 'nombre'; // Por default los jugadores se devuelven ordenados por nombre en orden ascendente.
+            $orden = 'ASC';
+            if (!empty($_GET['campo'])){ 
+                if($_GET['campo'] == 'nombre' || $_GET['campo'] == 'edad' || $_GET['campo'] == 'nacionalidad' || $_GET['campo'] == 'posicion' || $_GET['campo'] == 'pie_habil' || $_GET['campo'] == 'id_club'){
+                    $campo = $_GET['campo'];
+                    if (!empty($_GET['orden']) && $_GET['orden'] == 'ASC' || $_GET['orden'] == 'DESC'|| $_GET['orden'] == 'asc' || $_GET['orden'] == 'desc'){
                         $orden = $_GET['orden'];
-                        if ($orden == 'ASC' || $orden == 'DESC'|| $orden == 'asc' || $orden == 'desc'){
-                            //Se da por hecho que en el frontend "paginacion" es false por default y si el usurio pide paginacion se envia como un parametro get paginacion=true
-                            if (!empty($_GET['paginacion']) && !empty($_GET['limite'])){
-                                $paginacion = $_GET['paginacion'];
-                                $limite = $_GET['limite'];
-                                if ($paginacion==true && is_int($limite) && $limite<=250 && $limite>=1){
-                                $resultado = $this->jugadorModel->getJugadoresOrdenados($campo, $orden, $limite);
-                                $codigo=200;
-                                } else{
-                                    $resultado = 'Los valores no son los esperados';
-                                    $codigo = 404;
-                                }
-                            } else {
-                                $resultado = $this->jugadorModel->getJugadoresOrdenados($campo, $orden);
-                                $codigo=200;
-                            }
-                        } else{
-                            $resultado = 'Los valores no son los esperados';
-                            $codigo = 404;
-                        }
-                    } else{ //repeti codigo como un infeliz
-                        if (!empty($_GET['paginacion']) && !empty($_GET['limite'])){
-                            $paginacion = $_GET['paginacion'];
-                            $limite = $_GET['limite'];
-                            if ($paginacion==true && is_int($limite) && $limite<=250 && $limite>=1){
-                                $resultado = $this->jugadorModel->getJugadoresOrdenados($campo, 'ASC', $limite);
-                                $codigo=200;
-                            } else{
-                                $resultado = 'Los valores no son los esperados';
-                                $codigo = 404;
-                            }
-                        } else {
-                            $resultado = $this->jugadorModel->getJugadoresOrdenados($campo, 'ASC');
-                            $codigo=200;
-                        }
+                    // Si se manipula la url para enviar parametroGet orden=DESC sin enviar orden, se devolverán los jugadores por default. Es decir, por nombre ascendete.
+                    } else if(!empty($_GET['orden'])){
+                        return $this->view->response('El valor para el tipo de orden no es el esperado', 404);
                     } 
                 } else{
-                    $resultado = 'Los valores no son los esperados';
-                    $codigo = 404;
-                }
-            } else{//repeti codigo como un infeliz x2
-                if (!empty($_GET['paginacion']) && !empty($_GET['limite'])){
-                    $paginacion = $_GET['paginacion'];
-                    $limite = $_GET['limite'];
-                    if ($paginacion==true && is_int($limite) && $limite<=250 && $limite>=1){
-                        $resultado = $this->jugadorModel->getJugadores($limite);
-                        $codigo=200;
-                    } else{
-                        $resultado = 'Los valores no son los esperados';
-                        $codigo = 404;
-                    }
-                } else {
-                    $resultado = $this->jugadorModel->getJugadores();
-                    $codigo = 200;
+                    return $this->view->response('El valor para el campo de orden no es el esperado', 404);
                 }
             }
-            //el problema es que acá mezclamos entre hacerlo con funcion model compleja y hacerlo desde el controller
-            //este filtrado manual rompe el objeto fetch por tanto el paginamiento de sql
-            if (!empty($_GET['nacionalidad']) && ($codigo==200)){
+
+            // FILTRADO:
+            $nacionalidad = null;
+            // No existen controles para los valores parametroGET 'nacionalidad', si el valor no corresponde con un pais de un jugador simplemente devuelve un arreglo vacio.
+            if (!empty($_GET['nacionalidad'])){
                 $nacionalidad = $_GET['nacionalidad'];
-                $resultado_filtrado = [];
-                foreach($resultado as $jugador){
-                    if ($jugador->nacionalidad == $nacionalidad){
-                        array_push($resultado_filtrado, $jugador);
-                    }
-                }
-                //dejo que devuelva un arreglo vacio?
-                if(empty($resultado_filtrado)){
-                    $resultado = 'No existen jugadores con esa nacionalidad';
-                    $codigo = 404;
-                } else {
-                    $resultado = $resultado_filtrado;  
-                }
             }
-            return $this->view->response($resultado, $codigo); 
-            
+            $jugadores = $this->jugadorModel->getJugadores($nacionalidad, $campo, $orden, $inicio, $limite);
+            $this->view->response($jugadores, 200);
+
+        // ITEM ESPECIFICO    
         } else{
             $jugador = $this->jugadorModel->getJugadorById($params[':ID']);
             if ($jugador){
@@ -161,7 +131,7 @@ class JugadorApiController extends ApiController{
         }
     }
 
-    function agregarJugador($params=null){
+    function agregarJugador($params = null){
         $body = $this->getData();
         $nombre = $body->nombre;
         $edad = $body->edad;
