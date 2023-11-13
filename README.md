@@ -18,12 +18,9 @@ FILTRADO: para filtrar nosotros elejimos que se pueda filtrar por nacionalidad, 
 
 PAGINADO: para paginar se debera indicar
 ?pagina= la pagina que se solicita ver, si indicas una pagina mayor a la cantidad de jugadores seras avisado
-&limite= la cantidad de jugadores por pagina que se desea ver, si indicas un limite mayor a la cantidad de jugadores, serás avisado
+&limite= la cantidad de jugadores por pagina que se desea ver, si indicas un limite mayor a la cantidad de jugadores, serás avisado. Un ejemplo que aplica ordenado filtrado y paginado seria
 
-```
-Un ejemplo que aplica ordenado filtrado y paginado seria
 .../api/jugadores?campo=edad&orden=ASC&nacionalidad=Argentina&pagina=1&limite=4
-```
 
 [DELETE] .../api/jugadores/:ID eliminara el jugador que tenga el id especificado, sino existe te avisa
 
