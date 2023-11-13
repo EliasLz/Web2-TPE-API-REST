@@ -23,6 +23,8 @@ class AuthApiHelper {
             'alg' => 'HS256',
             'typ' => 'JWT'
         );
+
+       /*  $payload['exp'] = time() + 5; no es necesario */
         
         $header = base64url_encode(json_encode($header));
         $payload = base64url_encode(json_encode($payload));
@@ -51,7 +53,22 @@ class AuthApiHelper {
 
         $payload = json_decode(base64_decode($payload));
 
+        /* if($payload->exp<time()){
+            return false;
+        } no es necesario */ 
+
         return $payload;
+    }
+
+    function currentUser(){
+        $auth = $this->getAuthHeaders(); //"Bearer $token"
+        $auth = explode(" ", $auth); // [Bearer, $token]
+
+        if($auth[0] != "Bearer"){
+            return false;
+        }
+
+        return $this->verify($auth[1]); // Si está bien devuelve payload
     }
 
 }

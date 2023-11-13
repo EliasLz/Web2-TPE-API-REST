@@ -86,6 +86,11 @@ class JugadorApiController extends ApiController{
     }
 
     function updateJugador($params = []){
+        $user = $this->authApiHelper->currentUser();
+        if(!$user){
+            $this->view->response('Unauthorized', 404); //seria 401
+            return;
+        }
         $jugador_id = $params[':ID'];
         $jugador = $this->jugadorModel->getJugadorById($jugador_id);
 
@@ -137,6 +142,11 @@ class JugadorApiController extends ApiController{
     }
 
     function agregarJugador($params = []){
+        $user = $this->authApiHelper->currentUser();
+        if(!$user){
+            $this->view->response('Unauthorized', 404); //seria 401
+            return;
+        }
         $body = $this->getData();
         $nombre = $body->nombre;
         $edad = $body->edad;
