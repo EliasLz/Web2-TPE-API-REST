@@ -20,6 +20,11 @@ PAGINADO: para paginar se debera indicar
 ?pagina= la pagina que se solicita ver, si indicas una pagina mayor a la cantidad de jugadores seras avisado
 &limite= la cantidad de jugadores por pagina que se desea ver, si indicas un limite mayor a la cantidad de jugadores, serás avisado
 
+```
+Un ejemplo que aplica ordenado filtrado y paginado seria
+.../api/jugadores?campo=edad&orden=ASC&nacionalidad=Argentina&pagina=1&limite=4
+```
+
 [DELETE] .../api/jugadores/:ID eliminara el jugador que tenga el id especificado, sino existe te avisa
 
 [PUT] .../api/jugadores/:ID para editar la informacion del jugador con el id especifico, se debera tener el token, que se obtiene con el username webadmin y la password admin en la basic auth y en este
