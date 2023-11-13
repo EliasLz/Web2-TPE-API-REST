@@ -3,7 +3,7 @@
 require_once './app/models/Model.php';
 
 class JugadorModel extends Model{
-    // la solucion sería hacer todo desde pedidos sql solo con con esta funcion
+
     function getJugadores($nacionalidad, $campo, $orden, $inicio, $limite){
 
         if ($nacionalidad){
