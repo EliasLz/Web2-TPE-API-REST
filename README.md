@@ -1,32 +1,34 @@
 # Web2-TPE-API-REST
 
-Distribucion De Responsabilidades
-Miembro A -> Elias López encargado de Listado ordenado - PUT - Ordenado por cualquier campo (opcional) - Paginado
-Miembro B -> Tomás Almaraz Obtener un elemento por ID - POST - Filtrado (opcional) - Autenticacion Token
-Aclaracion : Igualmente en todo el trabajo nos fuimos ayudando mutuamente en cada responsabilidad, ya que tambien lo fuimos haciendo en las clases de consulta
+Distribución De Responsabilidades:
+Miembro A -> Elias López encargado de Listado ordenado - PUT - Ordenado por cualquier campo (opcional) - Paginado.
+Miembro B -> Tomás Almaraz Obtener un elemento por ID - POST - Filtrado (opcional) - Autenticación Token.
+Aclaración : Igualmente en todo el trabajo nos fuimos ayudando mutuamente en cada responsabilidad, ya que también lo fuimos haciendo en las clases de consulta.
 
 #Endpoints
 
 [GET] .../api/jugadores/:ID obtiene un jugador especificado por su ID
 
 [GET] .../api/jugadores/ listará todos los jugadores que hay en nuestra base de datos (Por default vienen ordenados por nombre ascendentemente)
-ORDENAMIENTO: para ordenar se debera indicar 
-?campo= el cual debera indicar una columna por la cual ordenar, esta debe existir en la base de datos, sino se avisara.
+ORDENAMIENTO: Se deberá indicar,
+?campo= el cual deberá indicar una columna por la cual ordenar, esta debe existir en la base de datos, sino se avisara.
 &orden= que debe ser "asc" o "desc",sino se especifica se considera que es "asc" y si el valor ingresado es otra cosa directamente damos un aviso.
 
-FILTRADO: para filtrar nosotros elejimos que se pueda filtrar por nacionalidad, para filtrar por nacionalidad hay que indicar
-?nacionalidad=Argentina por ejemplo y listara todos los jugadores de Argentina, sino existe ningun jugador de ese pais, se devolvera un arreglo vacio, ya que ninguno cumple con esa condicion.
+FILTRADO: Para filtrar nosotros elegimos que se pueda filtrar por nacionalidad, para filtrar por nacionalidad hay que indicar,
+?nacionalidad=Argentina por ejemplo y listara todos los jugadores de Argentina, sino existe ningun jugador de ese país, se devolvera un arreglo vacío, ya que ninguno cumple con esa condición.
 
-PAGINADO: para paginar se debera indicar
-?pagina= la pagina que se solicita ver, si indicas una pagina mayor a la cantidad de jugadores seras avisado
-&limite= la cantidad de jugadores por pagina que se desea ver, si indicas un limite mayor a la cantidad de jugadores, serás avisado. Un ejemplo que aplica ordenado filtrado y paginado seria
+PAGINADO: Para paginar se deberá indicar,
+?pagina= la página que se solicita ver, si indicas una página mayor a la cantidad de jugadores serás avisado.
+&limite= la cantidad de jugadores por página que se desea ver, si indicas un límite mayor a la cantidad de jugadores, serás avisado. Un ejemplo que aplica ordenado filtrado y paginado sería,
 
 .../api/jugadores?campo=edad&orden=ASC&nacionalidad=Argentina&pagina=1&limite=4
 
-[DELETE] .../api/jugadores/:ID eliminara el jugador que tenga el id especificado, sino existe te avisa
+Adjuntamos al repositorio link de diagrama guía para el testeo de los GET request.
 
-[PUT] .../api/jugadores/:ID para editar la informacion del jugador con el id especifico, se debera tener el token, que se obtiene con el username webadmin y la password admin en la basic auth y en este
-se debera mandar los siguientes datos en el siguiente formato
+[DELETE] .../api/jugadores/:ID eliminará el jugador que tenga el id específicado, si no existe te avisa
+
+[PUT] .../api/jugadores/:ID para editar la información del jugador con el id especifico, se deberá tener el token, que se obtiene con el username webadmin y la password admin en la basic auth y en este
+se deberá mandar los siguientes datos en el siguiente formato,
 
 ```json
     {
@@ -38,7 +40,7 @@ se debera mandar los siguientes datos en el siguiente formato
         "id_club": 3
     }
 ```
-[POST] .../api/jugadores/ para agregar un jugador,  se debera tener el token, que se obtiene con el username webadmin y la password admin en la basic auth y en este se debera mandar los siguientes datos en el siguiente formato
+[POST] .../api/jugadores/   Para agregar un jugador,  se deberá tener el token, que se obtiene con el username webadmin y la password admin en la basic auth y en este se deberá mandar los siguientes datos en el siguiente formato,
 
 ```json
 {
