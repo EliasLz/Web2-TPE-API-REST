@@ -4,17 +4,20 @@ require_once './app/models/Model.php';
 
 class JugadorModel extends Model{
 
-    function getJugadores($nacionalidad, $campo, $orden, $inicio, $limite){
-
-        if ($nacionalidad){
-            $query = $this->dataBase->prepare("SELECT * FROM jugadores WHERE nacionalidad = ? ORDER BY $campo $orden LIMIT $inicio,$limite");
-            $query->execute([$nacionalidad]);
-        } else{
-            $query = $this->dataBase->prepare("SELECT * FROM jugadores ORDER BY $campo $orden LIMIT $inicio,$limite");
-            $query->execute();
-        } 
+    function getJugadores($campo, $orden, $inicio, $limite){
+        $query = $this->dataBase->prepare("SELECT * FROM jugadores ORDER BY $campo $orden LIMIT $inicio,$limite");
+        $query->execute();
+        
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
+    
+    function getJugadoresFiltrados($nacionalidad, $campo, $orden, $inicio, $limite){
+        $query = $this->dataBase->prepare("SELECT * FROM jugadores WHERE nacionalidad = ? ORDER BY $campo $orden LIMIT $inicio,$limite");
+        $query->execute([$nacionalidad]);
+
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
+
 
     function getCantidadJugadores() {
         $query = $this->dataBase->prepare('SELECT COUNT(*) as cantidad FROM jugadores');

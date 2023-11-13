@@ -22,7 +22,7 @@ class JugadorApiController extends ApiController{
             // Defino variables y controlo parametros GET primero.
             // PAGINAMIENTO:            
             $inicio = 0;
-            $limite = $this->jugadorModel->getCantidadJugadores(); //por default el limite es la cantidad de jugadores que tenemos
+            $limite = $this->jugadorModel->getCantidadJugadores(); //por default el limite es la cantidad de jugadores que tenemos para que siempre se muestren todos
             if (!empty($_GET['pagina']) && $_GET['pagina'] >= 1 && $_GET['pagina'] <= $limite && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= $limite){
                 $pagina = intval($_GET['pagina']);
                 $limite = intval($_GET['limite']);
@@ -67,11 +67,16 @@ class JugadorApiController extends ApiController{
             }
             // FILTRADO:
             $nacionalidad = null;
-            // No existen controles para los valores parametroGET 'nacionalidad', si el valor no corresponde con un pais de un jugador simplemente devuelve un arreglo vacio.
+            // si el valor no corresponde con un pais de un jugador simplemente devuelve un arreglo vacio ya que ninguno cumple con la condicion.
             if (!empty($_GET['nacionalidad'])){
                 $nacionalidad = $_GET['nacionalidad'];
             }
-            $jugadores = $this->jugadorModel->getJugadores($nacionalidad, $campo, $orden, $inicio, $limite);
+            if($nacionalidad){
+                $jugadores = $this->jugadorModel->getJugadoresFiltrados($nacionalidad, $campo, $orden, $inicio, $limite);
+            } else{
+                $jugadores = $this->jugadorModel->getJugadores($campo, $orden, $inicio, $limite);
+            }
+           
             $this->view->response($jugadores, 200);
 
         // ITEM ESPECIFICO    

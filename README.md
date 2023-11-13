@@ -8,6 +8,7 @@ Aclaracion : Igualmente en todo el trabajo nos fuimos ayudando mutuamente en cad
 #Endpoints
 
 [GET] .../api/jugadores/:ID obtiene un jugador especificado por su ID
+
 [GET] .../api/jugadores/ listará todos los jugadores que hay en nuestra base de datos (Por default vienen ordenados por nombre ascendentemente)
 ORDENAMIENTO: para ordenar se debera indicar 
 ?campo= el cual debera indicar una columna por la cual ordenar, esta debe existir en la base de datos, sino se avisara.
