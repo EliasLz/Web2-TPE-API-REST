@@ -17,52 +17,47 @@ class JugadorApiController extends ApiController{
         $this->authApiHelper = new AuthApiHelper();
     }
 
-// ademas de restringir ciertas funciones solo a usuarios con token podemos hacer que alguna funcion solo este habilitada
-// para usuarios con token y administradores
-
-
-//si escribo mal 'jugadores' en el postman devuelve vacio, no hicimos un msj de error (es necesario controlar eso?)
     public function getJugadores($params = []){
-        if (empty($params)){ 
-            // VARIOS ITEMS
-            // Defino variables y controlo parametrosGET primero.
+        if (empty($params)){ // VARIOS ITEMS
+            // Defino variables y controlo parametros GET primero.
             // PAGINAMIENTO:            
             $inicio = 0;
-            $limite = 50; // Cargamos 3 clubes de 11 jugadores en la db. Con 50 es suficiente.
+            $limite = $this->jugadorModel->getCantidadJugadores(); //por default el limite es la cantidad de jugadores que tenemos
             //checkear que el valor de 'pagina' no sea negativo
-            if (!empty($_GET['pagina']) && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= 50){
+            //checkeear que no inyecten sql en pagina y en limite
+            if (!empty($_GET['pagina']) && $_GET['pagina'] >= 1 && $_GET['pagina'] <= $limite && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= $limite){
                 $pagina = intval($_GET['pagina']);
                 $limite = intval($_GET['limite']);
                 if ($pagina>1){
                     $inicio = ($pagina * $limite) - ($limite);
-                    //controlar bien aca (tengo que saber cuantos items existen en la tabla)
-                    if ($inicio < 0 || $inicio > 50){
-                        return $this->view->response('El valor para el inicio de paginado no es el esperado', 404);
-                    }
                 }
-            } else if (empty($_GET['pagina']) && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= 50){
-                // el ruturn no va abajo?
-                return $this->view->response('El valor de pagina es nulo', 404);
-                //return;
-            } else if (!empty($_GET['limite'])){
-                return $this->view->response('El valor para el limite de paginado no es el esperado', 404);
+            } else if (empty($_GET['pagina'])/*  && !empty($_GET['limite']) && $_GET['limite'] >= 1 && $_GET['limite'] <= 50 */){
+                $this->view->response('Falta el valor de la pagina', 404);
+                return;
+            } else if (empty($_GET['limite'])){
+                $this->view->response('Falta el valor de el limite', 404);
+                return;
+            }else{
+                $this->view->response('Los valores para el limite o el pagina no son los correctos', 404);
+                return;
             }
 
-            // ORDENAMIENTO: 
-            $campo = 'nombre'; // Por default los jugadores se devuelven ordenados por nombre en orden ascendente.
+            // ORDENAMIENTO:
+            // Por default los jugadores se devuelven ordenados por nombre en orden ascendente.
+            $campo = 'nombre'; 
             $orden = 'ASC';
-            if (!empty($_GET['campo'])){ 
-                if($_GET['campo'] == 'nombre' || $_GET['campo'] == 'edad' || $_GET['campo'] == 'nacionalidad' || $_GET['campo'] == 'posicion' || $_GET['campo'] == 'pie_habil' || $_GET['campo'] == 'id_club'){
-                    $campo = $_GET['campo'];
-                    if (!empty($_GET['orden']) && $_GET['orden'] == 'ASC' || $_GET['orden'] == 'DESC'|| $_GET['orden'] == 'asc' || $_GET['orden'] == 'desc'){
-                        $orden = $_GET['orden'];
-                    // Si se manipula la url para enviar parametroGet orden=DESC sin enviar orden, se devolverán los jugadores por default. Es decir, por nombre ascendete.
-                    } else if(!empty($_GET['orden'])){
-                        return $this->view->response('El valor para el tipo de orden no es el esperado', 404);
-                    } 
-                } else{
-                    return $this->view->response('El valor para el campo de orden no es el esperado', 404);
-                }
+            if(!empty($_GET['campo']) && $_GET['campo'] == 'nombre' || $_GET['campo'] == 'edad' || $_GET['campo'] == 'nacionalidad' || $_GET['campo'] == 'posicion' || $_GET['campo'] == 'pie_habil' || $_GET['campo'] == 'id_club'){
+                $campo = $_GET['campo'];
+                if (!empty($_GET['orden']) && $_GET['orden'] == 'ASC' || $_GET['orden'] == 'DESC'|| $_GET['orden'] == 'asc' || $_GET['orden'] == 'desc'){
+                    $orden = $_GET['orden'];
+                // Si se manipula la url para enviar parametroGet orden=DESC sin enviar orden, se devolverán los jugadores por default. Es decir, por nombre ascendete.
+                } else if(!empty($_GET['orden'])){
+                    $this->view->response('El valor para el tipo de orden no es el esperado', 404);
+                    return;
+                } 
+            } else{
+                $this->view->response('El valor para el campo de orden no es el esperado', 404);
+                return;
             }
 
             // FILTRADO:

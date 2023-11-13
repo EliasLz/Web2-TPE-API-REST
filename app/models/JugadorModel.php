@@ -4,20 +4,29 @@ require_once './app/models/Model.php';
 
 class JugadorModel extends Model{
     // la solucion sería hacer todo desde pedidos sql solo con con esta funcion
-    function getJugadores($nacionalidad=null, $campo, $orden, $inicio, $limite){
+    function getJugadores($nacionalidad, $campo, $orden, $inicio, $limite){
 
         if ($nacionalidad){
             $query = $this->dataBase->prepare("SELECT * FROM jugadores WHERE nacionalidad = ? ORDER BY $campo $orden LIMIT $inicio,$limite");
             $query->execute([$nacionalidad]);
-        } else if ($nacionalidad == null){
+        } else{
             $query = $this->dataBase->prepare("SELECT * FROM jugadores ORDER BY $campo $orden LIMIT $inicio,$limite");
             $query->execute();
-        } else { //este es para evitar algun posible fallo
-            $query = $this->dataBase->prepare('SELECT * FROM jugadores');
-            $query->execute();
-        }
+        } 
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
+
+    function getCantidadJugadores() {
+        $query = $this->dataBase->prepare('SELECT COUNT(*) as cantidad FROM jugadores');
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_OBJ);
+    
+        if ($result) {
+            return $result->cantidad;
+        } else {
+            return 0; // En caso de error o si no se encuentra ningún jugador.
+        }
+    }    
 
     function getJugadorById($id){
         $query = $this->dataBase->prepare('SELECT jugadores.*, clubes.nombre AS nombre_club FROM jugadores INNER JOIN clubes ON jugadores.id_club = clubes.id_club WHERE id_jugador = ?');

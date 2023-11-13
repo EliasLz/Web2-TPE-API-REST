@@ -10,7 +10,6 @@ class AuthApiHelper {
 
     function getAuthHeaders() {
         $header = "";
-        // y si setearon las 2? siempre te quedas con la 2da, perdes la 1ra...
         if(isset($_SERVER['HTTP_AUTHORIZATION']))
             $header = $_SERVER['HTTP_AUTHORIZATION'];
         if(isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
