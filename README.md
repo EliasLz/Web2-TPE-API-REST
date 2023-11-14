@@ -18,10 +18,8 @@ FILTRADO: Para filtrar nosotros elegimos que se pueda filtrar por nacionalidad, 
 ?nacionalidad=Argentina por ejemplo y listara todos los jugadores de Argentina, sino existe ningun jugador de ese país, se devolvera un arreglo vacío, ya que ninguno cumple con esa condición.
 
 PAGINADO: Para paginar se deberá indicar,
-?pagina= la página que se solicita ver, si indicas una página mayor a la cantidad de jugadores serás avisado.
-&limite= la cantidad de jugadores por página que se desea ver, si indicas un límite mayor a la cantidad de jugadores, serás avisado. Un ejemplo que aplica ordenado, filtrado y paginado sería,
-
-.../api/jugadores?campo=edad&orden=ASC&nacionalidad=Argentina&pagina=1&limite=4
+?pagina= la página que se solicita ver, si indicas el número de página el velor debe ser mayor a 1. Si se solicita un valor limite y no el número de página se te avisará que falta el valor de página.
+&limite= la cantidad de jugadores por página que se desea ver, si indicas un límite mayor a la cantidad de jugadores, se devolverán todos los jugadores. Si se indicas el número de página pero no el de limite te avisará que falta el valor de limite.
 
 Adjuntamos al repositorio link de diagrama guía para el testeo de los GET request.
 
